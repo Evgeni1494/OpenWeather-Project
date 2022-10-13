@@ -1,15 +1,47 @@
+from nturl2path import url2pathname
 from django.db import models
-
 from wagtail.models import Page
-from wagtail.fields import RichTextField
-from wagtail.admin.panels import FieldPanel
+from wagtail.admin.edit_handlers import FieldPanel, PageChooserPanel
+
+from wagtail.core.fields import StreamField
+
 
 
 class HomePage(Page):
-    body = RichTextField(blank=True)
+    lead_text = models.CharField(
+        max_length=140,
+        blank=True,
+        help_text = "Sous-titre sous la bannière"
+    )
+    button = models.ForeignKey(
+        'wagtailcore.Page',
+        blank=True,
+        null=True,
+        related_name="+",
+        help_text="Sélectionner une page à linker",
+        on_delete=models.SET_NULL
+    )
+    button_text = models.CharField(
+        max_length=50,
+        default= "Read More",
+        blank=False,
+        help_text="Bouton pour le texte",
+        
+    )
+    banner_background_image = models.ForeignKey(
+        'wagtailimages.Image',
+        blank=True,
+        null=True,
+        related_name="+",
+        help_text="bannière arrière plan",
+        on_delete = models.SET_NULL
+    )
+    
 
     content_panels = Page.content_panels + [
-        FieldPanel('body'),
+        FieldPanel("lead_text"),
+        PageChooserPanel("button"),
+        FieldPanel("button_text"),
+        FieldPanel("banner_background_image"),
+         
     ]
-
-
